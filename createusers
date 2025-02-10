@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# Excluir diretórios, arquivos, grupos e usuários criados anteriormente
+echo "Excluindo diretórios, arquivos, grupos e usuários anteriores..."
+
+# Remover usuários
+userdel -r carlos
+userdel -r maria
+userdel -r joao
+userdel -r debora
+userdel -r sebastiana
+userdel -r roberto
+userdel -r josefina
+userdel -r amanda
+userdel -r rogerio
+
+# Remover grupos
+groupdel GRP_ADM
+groupdel GRP_VEN
+groupdel GRP_SEC
+
+# Remover diretórios
+rm -rf /publico
+rm -rf /adm
+rm -rf /ven
+rm -rf /sec
+
+# Criar os diretórios
+echo "Criando diretórios..."
+mkdir -p /publico /adm /ven /sec
+
+# Criar os grupos
+echo "Criando grupos..."
+groupadd GRP_ADM
+groupadd GRP_VEN
+groupadd GRP_SEC
+
+# Criar os usuários e adicionar aos respectivos grupos
+echo "Criando usuários e adicionando aos grupos..."
+
+# Criando usuários do GRP_ADM
+useradd -m -s /bin/bash -g GRP_ADM carlos
+useradd -m -s /bin/bash -g GRP_ADM maria
+useradd -m -s /bin/bash -g GRP_ADM joao
+
+# Criando usuários do GRP_VEN
+useradd -m -s /bin/bash -g GRP_VEN debora
+useradd -m -s /bin/bash -g GRP_VEN sebastiana
+useradd -m -s /bin/bash -g GRP_VEN roberto
+
+# Criando usuários do GRP_SEC
+useradd -m -s /bin/bash -g GRP_SEC josefina
+useradd -m -s /bin/bash -g GRP_SEC amanda
+useradd -m -s /bin/bash -g GRP_SEC rogerio
+
+# Definir permissões dos diretórios
+echo "Configurando permissões de diretórios..."
+
+# /publico será acessível por todos os usuários
+chmod 777 /publico
+
+# /adm será acessível apenas para o grupo GRP_ADM
+chmod 770 /adm
+chown root:GRP_ADM /adm
+
+# /ven será acessível apenas para o grupo GRP_VEN
+chmod 770 /ven
+chown root:GRP_VEN /ven
+
+# /sec será acessível apenas para o grupo GRP_SEC
+chmod 770 /sec
+chown root:GRP_SEC /sec
+
+# Garantir que o acesso aos diretórios seja restrito aos respectivos grupos
+echo "Permissões configuradas com sucesso!"
+
+# Fim do script
