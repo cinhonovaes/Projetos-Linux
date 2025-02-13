@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# Atualiza o sistema
+echo "Atualizando o sistema..."
+sudo apt update -y
+sudo apt upgrade -y
+
+# Instalar pacotes necessários: Apache, PHP e outros
+echo "Instalando pacotes necessários..."
+sudo apt install -y apache2 php libapache2-mod-php php-mysql
+
+# Verificar se o Apache está instalado corretamente
+if ! command -v apache2 &> /dev/null; then
+    echo "Erro: Apache não foi instalado corretamente!"
+    exit 1
+else
+    echo "Apache instalado com sucesso!"
+fi
+
+# Verificar se o PHP está instalado corretamente
+if ! command -v php &> /dev/null; then
+    echo "Erro: PHP não foi instalado corretamente!"
+    exit 1
+else
+    echo "PHP instalado com sucesso!"
+fi
+
+# Configurar o Apache para um novo site
+echo "Configurando o Apache para o novo site..."
+cat <<EOF | sudo tee /etc/apache2/sites-available/meu_site.conf
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/meu_site
+    ServerName localhost
+
+    <Directory /var/www/meu_site>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog \${APACHE_LOG_DIR}/error.log
+    CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+
+# Criar o diretório do site
+echo "Criando o diretório do site..."
+sudo mkdir -p /var/www/meu_site
+echo "<?php phpinfo(); ?>" | sudo tee /var/www/meu_site/index.php
+
+# Habilitar o site e reiniciar o Apache
+echo "Habilitando o site no Apache..."
+sudo a2ensite meu_site.conf
+echo "Reiniciando o Apache para aplicar as configurações..."
+sudo systemctl restart apache2
+
+# Verificar se o Apache e o PHP estão funcionando
+echo "Verificando se o Apache está funcionando corretamente..."
+curl -I http://localhost
+
+# Mensagem final
+echo "Servidor Web Apache configurado com sucesso! Acesse seu servidor em http://localhost"
