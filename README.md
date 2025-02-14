@@ -1,0 +1,11 @@
+/my-project
+  /service-1
+    Dockerfile
+    app.py
+    requirements.txt
+  /service-2
+    Dockerfile
+    app.py
+    requirements.txt
+  docker-compose.yml
+  README.md
